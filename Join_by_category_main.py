@@ -12,7 +12,7 @@ from System.Collections.Generic import List
 from System import Math, DateTime, Double, TimeSpan
 from System.Diagnostics import Process, Stopwatch
 #endregion
-#region классы
+#region классы и общие функции
 class TimeCounter:
 	def __init__(self):
 		#self.name = name
@@ -21,6 +21,10 @@ class TimeCounter:
 	def stop(self):
 		self.time.Stop()
 		return self.time.Elapsed
+def flatten_List(a, res=None):
+	if res is None:
+		res = []
+	[flatten_List(i, res) if isinstance(a, list) else res.append(i) for i in a]
 #endregion
 #region сбор элементов для объединения
 def fcollector_by_cat_to_id(doc,c_id):
@@ -39,10 +43,6 @@ time = TimeCounter()
 if IN[1]:
 	results = 0
 	#region функции для объединения
-	def flatten_List(a, res=None):
-		if res is None:
-			res = []
-		[flatten_List(i, res) if isinstance(a, list) else res.append(i) for i in a]	
 		# for i in a:
 		# 	if isinstance(a, list):
 		# 		flatten_List(i, res)
@@ -77,7 +77,7 @@ if IN[1]:
 	#endregion
 	#region параметры для объединения
 	opt = Options()
-	items1 = elements
+	items1 = flatten_List(elements)
 	catIdlist = [id_name[0] for id_name in cats_ids_names]
 	ids = [i.Id for i in items1]
 	i_list_ids = List[ElementId](ids)
@@ -156,7 +156,7 @@ if IN[1]:
 	#endregion
 else:
 	#region разделение геометрии
-	items1 = elements
+	items1 = flatten_List(elements)
 	TransactionManager.Instance.EnsureInTransaction(doc)
 	for i in items1:
 		test = JoinGeometryUtils.GetJoinedElements(doc, i)
