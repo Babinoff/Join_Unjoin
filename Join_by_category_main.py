@@ -25,6 +25,7 @@ def flatten_List(a, res=None):
 	if res is None:
 		res = []
 	[flatten_List(i, res) if isinstance(a, list) else res.append(i) for i in a]
+	return res
 #endregion
 #region сбор элементов для объединения
 def fcollector_by_cat_to_id(doc,c_id):
@@ -43,12 +44,6 @@ time = TimeCounter()
 if IN[1]:
 	results = 0
 	#region функции для объединения
-		# for i in a:
-		# 	if isinstance(a, list):
-		# 		flatten_List(i, res)
-		# 	else:
-		# 		res.append(i)
-		return res
 	def join(x,y):
 		try:
 			JoinGeometryUtils.JoinGeometry(doc,x,y)
