@@ -103,50 +103,6 @@ if IN[1]:
 							pass
 						else:
 							results += join(els,i1)
-							"""
-							if e.Category.Name == "Стены" and i1.Category.Name == "Стены":
-								if e.get_Parameter(BuiltInParameter.WALL_STRUCTURAL_SIGNIFICANT).AsValueString() == "Да":
-									results += join(e,i1)
-								elif i1.get_Parameter(BuiltInParameter.WALL_STRUCTURAL_SIGNIFICANT).AsValueString() == "Да":
-									results += join(i1,e)
-								elif e.Width >= i1.Width:
-									results += join(e,i1)
-								else:
-									results += join(i1,e)
-							elif e.Category.Name == "Перекрытия" and e.get_Parameter(BuiltInParameter.FLOOR_PARAM_IS_STRUCTURAL).AsValueString() == "Да":
-								if i1.Category.Name == "Перекрытия" and i1.get_Parameter(BuiltInParameter.FLOOR_PARAM_IS_STRUCTURAL).AsValueString() == "Да":
-									if e.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8 > i1.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8:
-										results += join(e,i1)
-									else:
-										results += join(i1,e)
-								else:
-									results += join(e,i1)
-							elif i1.Category.Name == "Перекрытия" and i1.get_Parameter(BuiltInParameter.FLOOR_PARAM_IS_STRUCTURAL).AsValueString() == "Да":
-								if e.Category.Name == "Перекрытия" and e.get_Parameter(BuiltInParameter.FLOOR_PARAM_IS_STRUCTURAL).AsValueString() == "Да":
-									if e.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8 > i1.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8:
-										results += join(e,i1)
-									else:
-										results += join(i1,e)
-								else:
-									results += join(i1,e)
-							elif e.Category.Name == "Стены" and i1.Category.Name == "Перекрытия":
-								if e.get_Parameter(BuiltInParameter.WALL_STRUCTURAL_SIGNIFICANT).AsValueString() == "Да":
-									results += join_s(e,i1)
-								else:
-									results += join(e,i1)
-							elif e.Category.Name == "Перекрытия" and i1.Category.Name == "Стены":
-								if i1.get_Parameter(BuiltInParameter.WALL_STRUCTURAL_SIGNIFICANT).AsValueString() == "Да":
-									results += join_s(i1,e)
-								else:
-									results += join(e,i1)
-							elif e.Category.Name == "Перекрытия" and i1.Category.Name == "Перекрытия":	
-								if e.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8 > i1.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8:
-									results += join(e,i1)
-								else:
-									results += join(i1,e)
-							else:
-								results += join(e,i1)
-							"""
 	TransactionManager.Instance.ForceCloseTransaction()
 	#endregion
 else:
