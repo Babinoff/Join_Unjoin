@@ -1,16 +1,14 @@
-<Workspace Version="1.3.4.6666" X="1114.81948791896" Y="-127.591792736596" zoom="1.00082665112707" ScaleFactor="1" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="True">
+<Workspace Version="1.3.4.6666" X="713.096302379577" Y="83.4306935127667" zoom="0.613103984897331" ScaleFactor="1" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="True">
   <NamespaceResolutionMap />
   <Elements>
-    <PythonNodeModels.PythonNode guid="f0aedfca-5fa4-492b-a023-ada0e51d0e04" type="PythonNodeModels.PythonNode" nickname="WebRequestGitHab" x="-911.057013422542" y="277.833991196287" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="1">
+    <PythonNodeModels.PythonNode guid="f0aedfca-5fa4-492b-a023-ada0e51d0e04" type="PythonNodeModels.PythonNode" nickname="WebRequestGitHab" x="-908.414770669879" y="271.730129755942" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="1">
       <PortInfo index="0" default="False" />
       <Script># -*- coding: utf-8 -*- 
-#-----------------------Импоорт библиотек----------------------
+#region-----------------Импоорт библиотек----------------------
 import clr
 import sys 
 sys.path.append("C:\Program Files (x86)\IronPython 2.7\Lib")
 import os
-#import gitlab
-
 import System
 from System import Guid
 from System import DateTime
@@ -18,35 +16,19 @@ from System.IO import StreamReader
 from System.Net import WebRequest, HttpRequestHeader
 clr.AddReference('System.Web.Extensions')
 from System.Web.Script.Serialization import JavaScriptSerializer 
-
 from System import Type, Activator, IO, Text, Uri, Convert
-#Excel = Activator.CreateInstance(Type.GetTypeFromProgID("Excel.Application"))
-
+#endregion--------------Импоорт библиотек----------------------
 file_path = 'C:\\temp\\githab_code.py'
-
-#-----------------------ФУНКЦИИ----------------------
-def flatten(container):
-	for i in container:
-		if isinstance(i, (list,tuple)):
-			for j in flatten(i):
-				yield j
-		else:
-			yield i
-
+#region-----------------ФУНКЦИИ----------------------
 def LogSaveStrList(string_list):
 	IO.File.AppendAllLines(file_path, flatten(string_list), Text.Encoding.Unicode)
-
 def LogSaveStr(string):
 	IO.File.WriteAllText(file_path, string, Text.Encoding.Unicode)
-	
-
 def rsnrequest():
 	request = WebRequest.Create('https://api.github.com/repos/Babinoff/Join_Unjoin/contents/Join_by_category_main.py?ref=master')
 	request.Method = "GET"
 	request.UserAgent = "Anything"
-	#request.ServicePoint.Expect100Continue = False
 	token = '2f4c54160568dad4f3cd002ab358d9bf935ef133'
-	#request.Headers.Add(HttpRequestHeader.Authorization, token)
 	request.Headers["OAUTH-TOKEN"] = token
 	rsp = request.GetResponse()
 	stream_reader = StreamReader(rsp.GetResponseStream())
@@ -54,13 +36,14 @@ def rsnrequest():
 	stream_reader.Close()
 	json = JavaScriptSerializer().DeserializeObject(jsonData)
 	return json
-	
+#endregion-------------ФУНКЦИИ----------------------
+#region-----------------MAIN----------------------
 json_recv = rsnrequest()
 data_from_json = json_recv["content"]
 base64EncodedBytes = System.Convert.FromBase64String(data_from_json)
 python_code_string = System.Text.Encoding.UTF8.GetString(base64EncodedBytes)
 LogSaveStr(python_code_string)
-
+#endregion--------------MAIN----------------------
 OUT = python_code_string</Script>
     </PythonNodeModels.PythonNode>
     <PythonNodeModels.PythonStringNode guid="fe0430a6-d911-4d22-8715-48a97ccffc3b" type="PythonNodeModels.PythonStringNode" nickname="Python Script From String" x="-38.3613479918208" y="275.402641000393" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="3">
@@ -68,30 +51,62 @@ OUT = python_code_string</Script>
       <PortInfo index="1" default="False" />
       <PortInfo index="2" default="False" />
     </PythonNodeModels.PythonStringNode>
-    <Prorubim.DS.Common.ForceChildrensEval guid="17a3445d-89ab-4203-a19b-38232112e178" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="-974.797712858305" y="176.803705052745" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+    <Prorubim.DS.Common.ForceChildrensEval guid="17a3445d-89ab-4203-a19b-38232112e178" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="-976.870631592927" y="182.959263479342" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
       <PortInfo index="0" default="False" />
     </Prorubim.DS.Common.ForceChildrensEval>
-    <CoreNodeModels.Input.StringInput guid="3cf8192d-655b-43ca-a305-cbe7ab20f345" type="CoreNodeModels.Input.StringInput" nickname="Список категорий" x="-586.78329010758" y="466.947883125613" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+    <CoreNodeModels.Input.StringInput guid="3cf8192d-655b-43ca-a305-cbe7ab20f345" type="CoreNodeModels.Input.StringInput" nickname="Список категорий" x="-632.04884038552" y="423.568397442588" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
       <System.String>Части, Стены, Перекрытия, Несущие колонны, Каркас несущий</System.String>
       <System.String value="Части, Стены, Перекрытия, Несущие колонны, Каркас несущий" />
     </CoreNodeModels.Input.StringInput>
-    <CoreNodeModels.Input.BoolSelector guid="61c06c45-f2ae-449d-83c6-15a4eaa9137d" type="CoreNodeModels.Input.BoolSelector" nickname="Объединить геометрию /// Разделить геометрию " x="-588.009128032526" y="639.756925849862" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
-      <System.Boolean>False</System.Boolean>
+    <CoreNodeModels.Input.BoolSelector guid="61c06c45-f2ae-449d-83c6-15a4eaa9137d" type="CoreNodeModels.Input.BoolSelector" nickname="True - Объединить геометрию /// False - Разделить геометрию " x="-633.274678310466" y="586.727691806545" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.Boolean>True</System.Boolean>
     </CoreNodeModels.Input.BoolSelector>
+    <CoreNodeModels.Input.Filename guid="8cc7a63a-3552-4a0c-a544-41ceff68a3e3" type="CoreNodeModels.Input.Filename" nickname="Путь к файлу Python:" x="-982.430793492451" y="-512.205318984582" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <System.String>.\Join_by_category_main.py</System.String>
+      <HintPath>D:\data\code\git\Join_Unjoin-1\Join_by_category_main.py</HintPath>
+    </CoreNodeModels.Input.Filename>
+    <Prorubim.DS.Common.ForceChildrensEval guid="f8450bae-8543-4bf8-a675-74f229958866" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="-1000.5976983219" y="-397.396351018885" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+    </Prorubim.DS.Common.ForceChildrensEval>
+    <PythonNodeModels.PythonNode guid="f8e61a7c-3e5d-4b47-9c01-4b9674980d86" type="PythonNodeModels.PythonNode" nickname="Find file and import it!" x="-949.336223668583" y="-294.105878122382" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" inputcount="1">
+      <PortInfo index="0" default="False" />
+      <Script>import sys
+sys.path.append('C:\Program Files (x86)\IronPython 2.7\Lib')
+import codecs
+
+try:
+	filePath = IN[0]
+	with codecs.open(filePath, 'rb', "utf-8") as inf:
+		lines = inf.readlines()
+	OUT = ''.join(lines)
+except:
+	OUT = "No file"</Script>
+    </PythonNodeModels.PythonNode>
   </Elements>
   <Connectors>
     <Dynamo.Graph.Connectors.ConnectorModel start="f0aedfca-5fa4-492b-a023-ada0e51d0e04" start_index="0" end="fe0430a6-d911-4d22-8715-48a97ccffc3b" end_index="0" portType="0" />
     <Dynamo.Graph.Connectors.ConnectorModel start="17a3445d-89ab-4203-a19b-38232112e178" start_index="0" end="f0aedfca-5fa4-492b-a023-ada0e51d0e04" end_index="0" portType="0" />
     <Dynamo.Graph.Connectors.ConnectorModel start="3cf8192d-655b-43ca-a305-cbe7ab20f345" start_index="0" end="fe0430a6-d911-4d22-8715-48a97ccffc3b" end_index="1" portType="0" />
     <Dynamo.Graph.Connectors.ConnectorModel start="61c06c45-f2ae-449d-83c6-15a4eaa9137d" start_index="0" end="fe0430a6-d911-4d22-8715-48a97ccffc3b" end_index="2" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="8cc7a63a-3552-4a0c-a544-41ceff68a3e3" start_index="0" end="f8450bae-8543-4bf8-a675-74f229958866" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="f8450bae-8543-4bf8-a675-74f229958866" start_index="0" end="f8e61a7c-3e5d-4b47-9c01-4b9674980d86" end_index="0" portType="0" />
   </Connectors>
   <Notes />
   <Annotations>
-    <Dynamo.Graph.Annotations.AnnotationModel guid="4f94805f-9d55-422f-ad5a-e2d5a3899053" annotationText="" left="-596.78329010758" top="420.947883125613" width="208.8" height="145.8" fontSize="30" InitialTop="466.947883125613" InitialHeight="129.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
+    <Dynamo.Graph.Annotations.AnnotationModel guid="4f94805f-9d55-422f-ad5a-e2d5a3899053" annotationText="" left="-642.04884038552" top="377.568397442588" width="208.8" height="145.8" fontSize="30" InitialTop="423.568397442588" InitialHeight="129.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
       <Models ModelGuid="3cf8192d-655b-43ca-a305-cbe7ab20f345" />
     </Dynamo.Graph.Annotations.AnnotationModel>
-    <Dynamo.Graph.Annotations.AnnotationModel guid="a557e362-0db5-40fc-bf9d-3b656f79c674" annotationText="" left="-598.009128032526" top="593.756925849862" width="361.6" height="113.8" fontSize="30" InitialTop="639.756925849862" InitialHeight="97.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
+    <Dynamo.Graph.Annotations.AnnotationModel guid="a557e362-0db5-40fc-bf9d-3b656f79c674" annotationText="" left="-643.274678310466" top="540.727691806545" width="444" height="113.8" fontSize="30" InitialTop="586.727691806545" InitialHeight="97.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
       <Models ModelGuid="61c06c45-f2ae-449d-83c6-15a4eaa9137d" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="c528ebac-f65c-4a22-9d9c-afbe207bfb3c" annotationText="Local Python file" left="-1010.5976983219" top="-558.205318984582" width="220.061474653322" height="356.6994408622" fontSize="30" InitialTop="-512.205318984582" InitialHeight="340.6994408622" TextblockHeight="36" backgrouund="#FFB9F9E1">
+      <Models ModelGuid="8cc7a63a-3552-4a0c-a544-41ceff68a3e3" />
+      <Models ModelGuid="f8450bae-8543-4bf8-a675-74f229958866" />
+      <Models ModelGuid="f8e61a7c-3e5d-4b47-9c01-4b9674980d86" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="596a51f7-41bc-47e2-91a1-072d581a4867" annotationText="Python file from Github" left="-986.870631592927" top="100.959263479342" width="221.255860923048" height="263.3708662766" fontSize="30" InitialTop="182.959263479342" InitialHeight="211.3708662766" TextblockHeight="72" backgrouund="#FFB9F9E1">
+      <Models ModelGuid="f0aedfca-5fa4-492b-a023-ada0e51d0e04" />
+      <Models ModelGuid="17a3445d-89ab-4203-a19b-38232112e178" />
     </Dynamo.Graph.Annotations.AnnotationModel>
   </Annotations>
   <Presets />
