@@ -1,7 +1,7 @@
-<Workspace Version="1.3.4.6666" X="535.583914400431" Y="131.685454130388" zoom="0.147966874662826" ScaleFactor="1" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="True">
+<Workspace Version="1.3.4.6666" X="668.907264189202" Y="-94.0531463555478" zoom="0.602740456995543" ScaleFactor="1" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="True">
   <NamespaceResolutionMap />
   <Elements>
-    <PythonNodeModels.PythonNode guid="f0aedfca-5fa4-492b-a023-ada0e51d0e04" type="PythonNodeModels.PythonNode" nickname="WebRequestGitHab" x="-512.107001756237" y="297.11410328425" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="1">
+    <PythonNodeModels.PythonNode guid="f0aedfca-5fa4-492b-a023-ada0e51d0e04" type="PythonNodeModels.PythonNode" nickname="WebRequestGitHab" x="-911.057013422542" y="277.833991196287" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="1">
       <PortInfo index="0" default="False" />
       <Script># -*- coding: utf-8 -*- 
 #-----------------------Импоорт библиотек----------------------
@@ -63,11 +63,12 @@ LogSaveStr(python_code_string)
 
 OUT = python_code_string</Script>
     </PythonNodeModels.PythonNode>
-    <PythonNodeModels.PythonStringNode guid="fe0430a6-d911-4d22-8715-48a97ccffc3b" type="PythonNodeModels.PythonStringNode" nickname="Python Script From String" x="-128.012723519773" y="297.994559996568" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" inputcount="2">
+    <PythonNodeModels.PythonStringNode guid="fe0430a6-d911-4d22-8715-48a97ccffc3b" type="PythonNodeModels.PythonStringNode" nickname="Python Script From String" x="-128.012723519773" y="297.994559996568" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" inputcount="3">
       <PortInfo index="0" default="False" />
       <PortInfo index="1" default="False" />
+      <PortInfo index="2" default="False" />
     </PythonNodeModels.PythonStringNode>
-    <Prorubim.DS.Common.ForceChildrensEval guid="17a3445d-89ab-4203-a19b-38232112e178" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="-839.836928242566" y="298.416719761433" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+    <Prorubim.DS.Common.ForceChildrensEval guid="17a3445d-89ab-4203-a19b-38232112e178" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="-974.797712858305" y="176.803705052745" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
       <PortInfo index="0" default="False" />
     </Prorubim.DS.Common.ForceChildrensEval>
     <CoreNodeModels.Input.StringInput guid="1225990d-3cc8-4be9-926e-821b3ab5f57c" type="CoreNodeModels.Input.StringInput" nickname="Список категорий" x="-1222.97487119388" y="1266.36973521235" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
@@ -748,10 +749,13 @@ OUT = "Unjoin elements = "+str(results), "Time in seconds = "+str(time)
     <CoreNodeModels.Watch guid="9c8cfa49-c637-4244-8da5-23ac3c9891ea" type="CoreNodeModels.Watch" nickname="Количество объединённых элементов" x="638.514122035479" y="2263.80568055997" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
       <PortInfo index="0" default="False" />
     </CoreNodeModels.Watch>
-    <CoreNodeModels.Input.StringInput guid="3cf8192d-655b-43ca-a305-cbe7ab20f345" type="CoreNodeModels.Input.StringInput" nickname="Список категорий" x="-149.69610968058" y="550.675502338682" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+    <CoreNodeModels.Input.StringInput guid="3cf8192d-655b-43ca-a305-cbe7ab20f345" type="CoreNodeModels.Input.StringInput" nickname="Список категорий" x="-617.95751989539" y="428.579600309847" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
       <System.String>Части, Стены, Перекрытия, Несущие колонны, Каркас несущий</System.String>
       <System.String value="Части, Стены, Перекрытия, Несущие колонны, Каркас несущий" />
     </CoreNodeModels.Input.StringInput>
+    <CoreNodeModels.Input.BoolSelector guid="61c06c45-f2ae-449d-83c6-15a4eaa9137d" type="CoreNodeModels.Input.BoolSelector" nickname="Объединить геометрию /// Разделить геометрию " x="-629.185776988387" y="709.552369769371" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.Boolean>True</System.Boolean>
+    </CoreNodeModels.Input.BoolSelector>
   </Elements>
   <Connectors>
     <Dynamo.Graph.Connectors.ConnectorModel start="f0aedfca-5fa4-492b-a023-ada0e51d0e04" start_index="0" end="fe0430a6-d911-4d22-8715-48a97ccffc3b" end_index="0" portType="0" />
@@ -770,6 +774,7 @@ OUT = "Unjoin elements = "+str(results), "Time in seconds = "+str(time)
     <Dynamo.Graph.Connectors.ConnectorModel start="274331a7-a2d0-4510-81b6-f575e48a5fe1" start_index="0" end="dfb12502-1074-47d7-ab8c-ee4272a716f8" end_index="1" portType="0" />
     <Dynamo.Graph.Connectors.ConnectorModel start="274331a7-a2d0-4510-81b6-f575e48a5fe1" start_index="0" end="7d1a1061-ff17-4b7c-9ddc-0a9c8323a680" end_index="1" portType="0" />
     <Dynamo.Graph.Connectors.ConnectorModel start="3cf8192d-655b-43ca-a305-cbe7ab20f345" start_index="0" end="fe0430a6-d911-4d22-8715-48a97ccffc3b" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="61c06c45-f2ae-449d-83c6-15a4eaa9137d" start_index="0" end="fe0430a6-d911-4d22-8715-48a97ccffc3b" end_index="2" portType="0" />
   </Connectors>
   <Notes />
   <Annotations>
@@ -779,11 +784,11 @@ OUT = "Unjoin elements = "+str(results), "Time in seconds = "+str(time)
     <Dynamo.Graph.Annotations.AnnotationModel guid="0fac7821-d40a-45f0-8268-089a9e233e8a" annotationText="" left="-927.383169789857" top="1550.0005403666" width="360" height="164.2" fontSize="30" InitialTop="1596.0005403666" InitialHeight="148.2" TextblockHeight="36" backgrouund="#FFBB87C6">
       <Models ModelGuid="1ccd40bf-ba0c-4f23-ac15-1ff5738d8d9a" />
     </Dynamo.Graph.Annotations.AnnotationModel>
-    <Dynamo.Graph.Annotations.AnnotationModel guid="f7ea610f-4090-4ac2-b26c-e30c16430c93" annotationText="" left="15.4423843692771" top="1409.01114765077" width="342.68183926203" height="321.249021166408" fontSize="30" InitialTop="1455.01114765077" InitialHeight="305.249021166408" TextblockHeight="36" backgrouund="#FF48B9FF">
+    <Dynamo.Graph.Annotations.AnnotationModel guid="f7ea610f-4090-4ac2-b26c-e30c16430c93" annotationText="" left="15.4423843692771" top="1409.01114765077" width="342.68183926203" height="321.24902116641" fontSize="30" InitialTop="1455.01114765077" InitialHeight="305.249021166408" TextblockHeight="36" backgrouund="#FF48B9FF">
       <Models ModelGuid="dfb12502-1074-47d7-ab8c-ee4272a716f8" />
       <Models ModelGuid="3a72f325-f324-4f97-84f7-bcd666830424" />
     </Dynamo.Graph.Annotations.AnnotationModel>
-    <Dynamo.Graph.Annotations.AnnotationModel guid="de302eb7-1b38-4e60-aaf9-9c4a19e427c9" annotationText="" left="-331.087113043488" top="988.879733391102" width="506.36879411233" height="149.37362134727" fontSize="30" InitialTop="1034.8797333911" InitialHeight="133.37362134727" TextblockHeight="36" backgrouund="#FFC1D676">
+    <Dynamo.Graph.Annotations.AnnotationModel guid="de302eb7-1b38-4e60-aaf9-9c4a19e427c9" annotationText="" left="-331.087113043488" top="988.8797333911" width="506.36879411233" height="149.37362134727" fontSize="30" InitialTop="1034.8797333911" InitialHeight="133.37362134727" TextblockHeight="36" backgrouund="#FFC1D676">
       <Models ModelGuid="316abeca-6f59-408d-90a0-86d1d7226875" />
       <Models ModelGuid="743c8ac0-82b2-4910-8b4f-8c43ee3da44f" />
     </Dynamo.Graph.Annotations.AnnotationModel>
@@ -796,8 +801,11 @@ OUT = "Unjoin elements = "+str(results), "Time in seconds = "+str(time)
     <Dynamo.Graph.Annotations.AnnotationModel guid="a42a4d67-041e-4150-885b-96a0772f6939" annotationText="" left="628.514122035479" top="2217.80568055997" width="308" height="209.8" fontSize="30" InitialTop="2263.80568055997" InitialHeight="121.8" TextblockHeight="36" backgrouund="#FF71C6A8">
       <Models ModelGuid="9c8cfa49-c637-4244-8da5-23ac3c9891ea" />
     </Dynamo.Graph.Annotations.AnnotationModel>
-    <Dynamo.Graph.Annotations.AnnotationModel guid="4f94805f-9d55-422f-ad5a-e2d5a3899053" annotationText="" left="-159.69610968058" top="504.675502338682" width="208.8" height="145.8" fontSize="30" InitialTop="550.675502338682" InitialHeight="129.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
+    <Dynamo.Graph.Annotations.AnnotationModel guid="4f94805f-9d55-422f-ad5a-e2d5a3899053" annotationText="" left="-627.95751989539" top="382.579600309847" width="208.8" height="145.8" fontSize="30" InitialTop="428.579600309847" InitialHeight="129.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
       <Models ModelGuid="3cf8192d-655b-43ca-a305-cbe7ab20f345" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="a557e362-0db5-40fc-bf9d-3b656f79c674" annotationText="" left="-639.185776988387" top="663.552369769371" width="361.6" height="113.8" fontSize="30" InitialTop="709.552369769371" InitialHeight="97.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
+      <Models ModelGuid="61c06c45-f2ae-449d-83c6-15a4eaa9137d" />
     </Dynamo.Graph.Annotations.AnnotationModel>
   </Annotations>
   <Presets />

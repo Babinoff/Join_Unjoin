@@ -13,7 +13,7 @@ from System import Math, DateTime, Double, TimeSpan
 from System.Diagnostics import Process, Stopwatch
 #endregion
 #region классы
-class TimeCounter0:
+class TimeCounter:
 	def __init__(self):
 		#self.name = name
 		self.time = System.Diagnostics.Stopwatch.StartNew()
@@ -35,6 +35,7 @@ elements = []
 [parts.append(fcollector_by_cat_to_id(doc,id_name[0])) if id_name[1] == "Части" else elements.append(fcollector_by_cat_to_id(doc,id_name[0])) for id_name in cats_ids_names]
 #endregion
 #region main
+time = TimeCounter()
 if IN[1]:
 	results = 0
 	#region функции для объединения
@@ -151,7 +152,25 @@ if IN[1]:
 							else:
 								results += join(int,i1)
 							"""
-	TransactionManager.Instance.TransactionTaskDone()
+	TransactionManager.Instance.ForceCloseTransaction()
+	#endregion
+else:
+	#region разделение геометрии
+	items1 = elements
+	TransactionManager.Instance.EnsureInTransaction(doc)
+	for i in items1:
+		test = JoinGeometryUtils.GetJoinedElements(doc, i)
+		if test:
+			for t in test:
+				
+				JoinGeometryUtils.UnjoinGeometry(doc,i,doc.GetElement(t))
+				
+				results += 1
+	TransactionManager.Instance.ForceCloseTransaction()
 	#endregion
 #endregion
-OUT = "Join elements = " + str(results), "Time in seconds = " + str(time)
+t = time.stop()
+if IN[0]:
+	OUT = "Join elements = " + str(results), "Minutes, Seconds, Milliseconds = ", [t.Minutes, t.Seconds, t.Milliseconds]
+else:
+	OUT = "Unjoin elements = " + str(results), "Minutes, Seconds, Milliseconds = ", [t.Minutes, t.Seconds, t.Milliseconds]
