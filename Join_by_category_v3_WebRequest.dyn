@@ -1,0 +1,807 @@
+<Workspace Version="1.3.4.6666" X="535.583914400431" Y="131.685454130388" zoom="0.147966874662826" ScaleFactor="1" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="True">
+  <NamespaceResolutionMap />
+  <Elements>
+    <PythonNodeModels.PythonNode guid="f0aedfca-5fa4-492b-a023-ada0e51d0e04" type="PythonNodeModels.PythonNode" nickname="WebRequestGitHab" x="-512.107001756237" y="297.11410328425" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="1">
+      <PortInfo index="0" default="False" />
+      <Script># -*- coding: utf-8 -*- 
+#-----------------------Импоорт библиотек----------------------
+import clr
+import sys 
+sys.path.append("C:\Program Files (x86)\IronPython 2.7\Lib")
+import os
+#import gitlab
+
+import System
+from System import Guid
+from System import DateTime
+from System.IO import StreamReader
+from System.Net import WebRequest, HttpRequestHeader
+clr.AddReference('System.Web.Extensions')
+from System.Web.Script.Serialization import JavaScriptSerializer 
+
+from System import Type, Activator, IO, Text, Uri, Convert
+#Excel = Activator.CreateInstance(Type.GetTypeFromProgID("Excel.Application"))
+
+file_path = 'C:\\temp\\githab_code.py'
+
+#-----------------------ФУНКЦИИ----------------------
+def flatten(container):
+	for i in container:
+		if isinstance(i, (list,tuple)):
+			for j in flatten(i):
+				yield j
+		else:
+			yield i
+
+def LogSaveStrList(string_list):
+	IO.File.AppendAllLines(file_path, flatten(string_list), Text.Encoding.Unicode)
+
+def LogSaveStr(string):
+	IO.File.WriteAllText(file_path, string, Text.Encoding.Unicode)
+	
+
+def rsnrequest():
+	request = WebRequest.Create('https://api.github.com/repos/Babinoff/Join_Unjoin/contents/Join_by_category_main.py?ref=master')
+	request.Method = "GET"
+	request.UserAgent = "Anything"
+	#request.ServicePoint.Expect100Continue = False
+	token = '2f4c54160568dad4f3cd002ab358d9bf935ef133'
+	#request.Headers.Add(HttpRequestHeader.Authorization, token)
+	request.Headers["OAUTH-TOKEN"] = token
+	rsp = request.GetResponse()
+	stream_reader = StreamReader(rsp.GetResponseStream())
+	jsonData = stream_reader.ReadToEnd()
+	stream_reader.Close()
+	json = JavaScriptSerializer().DeserializeObject(jsonData)
+	return json
+	
+json_recv = rsnrequest()
+data_from_json = json_recv["content"]
+base64EncodedBytes = System.Convert.FromBase64String(data_from_json)
+python_code_string = System.Text.Encoding.UTF8.GetString(base64EncodedBytes)
+LogSaveStr(python_code_string)
+
+OUT = python_code_string</Script>
+    </PythonNodeModels.PythonNode>
+    <PythonNodeModels.PythonStringNode guid="fe0430a6-d911-4d22-8715-48a97ccffc3b" type="PythonNodeModels.PythonStringNode" nickname="Python Script From String" x="-128.012723519773" y="297.994559996568" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" inputcount="2">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+    </PythonNodeModels.PythonStringNode>
+    <Prorubim.DS.Common.ForceChildrensEval guid="17a3445d-89ab-4203-a19b-38232112e178" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="-839.836928242566" y="298.416719761433" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+    </Prorubim.DS.Common.ForceChildrensEval>
+    <CoreNodeModels.Input.StringInput guid="1225990d-3cc8-4be9-926e-821b3ab5f57c" type="CoreNodeModels.Input.StringInput" nickname="Список категорий" x="-1222.97487119388" y="1266.36973521235" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.String>Части, Стены, Перекрытия, Несущие колонны, Каркас несущий</System.String>
+      <System.String value="Части, Стены, Перекрытия, Несущие колонны, Каркас несущий" />
+    </CoreNodeModels.Input.StringInput>
+    <PythonNodeModels.PythonNode guid="10ee8152-1e54-4992-8a72-c910bd67c412" type="PythonNodeModels.PythonNode" nickname="Python Script" x="-792.019046980188" y="1266.85984093118" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="1">
+      <PortInfo index="0" default="False" />
+      <Script>import clr
+import System
+clr.AddReference('RevitAPI')
+from Autodesk.Revit.DB import *
+clr.AddReference("RevitNodes")
+import Revit
+clr.AddReference("RevitServices")
+from RevitServices.Persistence import DocumentManager
+doc = DocumentManager.Instance.CurrentDBDocument
+clr.AddReference('System')
+import System
+from System.Collections.Generic import List
+
+bics = System.Enum.GetValues(BuiltInCategory)
+cdata = []
+
+cats = doc.Settings.Categories
+cats_string = UnwrapElement(IN[0])
+
+cats_id_name = [(cat.Id,cat.Name) for cat in cats if cat.Name in cats_string]
+cats_id = [cat.Id for cat in cats if cat.Name in cats_string]
+"""
+build_ilist = List[BuiltInCategory]()
+#cats_build_in = [build_ilist.Add(category.Id.IntegerValuefor) for category in cats]#[build_ilist.Add(id.IntegerValuefor) for id[0] in cats_id_name]
+
+#finde_ost = [bic for bic in bics if Revit.Elements.Category.ById(ElementId(bic).IntegerValue).Name in cats_names]
+
+for bic in bics:
+	try:
+		cdata.append(Revit.Elements.Category.ById(ElementId(bic).IntegerValue).Name)
+	except:
+		pass
+"""
+OUT = cats_id</Script>
+    </PythonNodeModels.PythonNode>
+    <PythonNodeModels.PythonNode guid="1ccd40bf-ba0c-4f23-ac15-1ff5738d8d9a" type="PythonNodeModels.PythonNode" nickname="Python Script - Собираем элементы по категориям" x="-917.383169789857" y="1596.0005403666" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="2">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <Script>import clr
+clr.AddReference("RevitServices")
+import RevitServices
+from RevitServices.Persistence import DocumentManager
+
+clr.AddReference('RevitAPI')
+from Autodesk.Revit.DB import *
+
+doc = DocumentManager.Instance.CurrentDBDocument
+uiapp = DocumentManager.Instance.CurrentUIApplication
+uidoc = DocumentManager.Instance.CurrentUIDocument
+app = uiapp.Application
+cats = doc.Settings.Categories
+aview = doc.ActiveView
+
+def fcollector_by_cat_to_id(doc,c_id):
+	return FilteredElementCollector(doc).OfCategoryId(c_id).WhereElementIsNotElementType().ToElements()
+
+cats = doc.Settings.Categories
+collector = FilteredElementCollector(doc)
+
+cats_string = UnwrapElement(IN[0])
+
+cats_id_name = [(cat.Id,cat.Name) for cat in cats if cat.Name in cats_string]
+
+parts = []
+elements = []
+
+[parts.append(fcollector_by_cat_to_id(doc,id_name[0])) if id_name[1] == "Части" else elements.append(fcollector_by_cat_to_id(doc,id_name[0])) for id_name in cats_id_name]
+
+OUT = parts, elements</Script>
+    </PythonNodeModels.PythonNode>
+    <CoreNodeModels.Input.BoolSelector guid="e1e56bc7-e44f-4723-8a23-46ab9c007f5f" type="CoreNodeModels.Input.BoolSelector" nickname="Перезапуск" x="-1238.68896286272" y="1595.70763769071" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.Boolean>False</System.Boolean>
+    </CoreNodeModels.Input.BoolSelector>
+    <Dynamo.Graph.Nodes.CodeBlockNodeModel guid="3a72f325-f324-4f97-84f7-bcd666830424" type="Dynamo.Graph.Nodes.CodeBlockNodeModel" nickname="Code Block" x="25.4423843692771" y="1455.01114765077" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" CodeText="Flor;" ShouldFocus="false">
+      <PortInfo index="0" default="False" />
+    </Dynamo.Graph.Nodes.CodeBlockNodeModel>
+    <Dynamo.Graph.Nodes.ZeroTouch.DSFunction guid="743c8ac0-82b2-4910-8b4f-8c43ee3da44f" type="Dynamo.Graph.Nodes.ZeroTouch.DSFunction" nickname="Flatten" x="-321.087113043488" y="1045.65335473837" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="true" assembly="BuiltIn" function="Flatten@var[]..[]">
+      <PortInfo index="0" default="False" useLevels="True" level="3" shouldKeepListStructure="False" />
+    </Dynamo.Graph.Nodes.ZeroTouch.DSFunction>
+    <PythonNodeModels.PythonNode guid="dfb12502-1074-47d7-ab8c-ee4272a716f8" type="PythonNodeModels.PythonNode" nickname="filter.colector by list 1.0" x="191.324223631307" y="1586.46016881718" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="3">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <PortInfo index="2" default="False" />
+      <Script>results = 0
+from time import time
+tic = time() # время для начала отсчета http://dynamobim.ru/forums/topic/раздутый-файл-dyn-callsitetracedata/#post-8050
+
+if IN[1] == True:
+	import clr
+	
+	clr.AddReference('RevitAPI')
+	import Autodesk
+	from Autodesk.Revit.DB import GeometryInstance, FilteredElementCollector, JoinGeometryUtils, Options, ElementId, ElementIntersectsSolidFilter, BuiltInParameter
+	
+	clr.AddReference('RevitServices')
+	import RevitServices
+	from RevitServices.Persistence import DocumentManager
+	from RevitServices.Transactions import TransactionManager
+	
+	clr.AddReference('System')
+	from System.Collections.Generic import List
+	from System import Math
+	
+	def flatten_List(a, res=None):
+		if res is None:
+			res = []
+		for i in a:
+			if isinstance(a, list):
+				flatten_List(i, res)
+			else:
+				res.append(i)
+		return res
+	
+	
+	def join(x,y):
+		try:
+			JoinGeometryUtils.JoinGeometry(doc,x,y)
+			results = 1
+		except:
+			results = 0
+		return results
+	
+	def join_s(x,y):
+		try:
+			JoinGeometryUtils.JoinGeometry(doc,x,y)
+			JoinGeometryUtils.SwitchJoinOrder(doc,x,y)
+			results = 1
+		except:
+			results = 0
+		return results	
+	
+	opt = Options()
+	doc = DocumentManager.Instance.CurrentDBDocument
+	
+	reset = IN[0]
+	items1 = UnwrapElement(IN[0])
+	catIdlist = UnwrapElement(IN[2])
+	ids = []
+	inter = []
+	aliter = []
+	alliter = []
+
+	geo_options = Options()
+	geo_options.ComputeReferences = False
+	geo_options.IncludeNonVisibleObjects = False	
+
+	def get_geometys(element):
+		if element.get_Geometry(geo_options):
+			for geometry_inst in element.get_Geometry(geo_options):
+				if geometry_inst.GetType() == Autodesk.Revit.DB.GeometryInstance:
+					for geometry in geometry_inst.SymbolGeometry:
+						if geometry.GetType() == Autodesk.Revit.DB.Solid and Math.Round(geometry.Volume,3) != 0:
+							return geometry
+				else:
+					if geometry_inst.GetType() == Autodesk.Revit.DB.Solid and Math.Round(geometry_inst.Volume,3) != 0:
+						return geometry_inst
+
+	for i in items1:
+		ids.append(i.Id)
+		
+	iids = List[ElementId](ids)
+
+	for i1 in items1:	
+		#geomElem = i1.get_Geometry(opt)
+		"""
+		for geomObj in geomElem:
+			ids.append(geomObj.ToString())
+			if geomObj.ToString() == "Autodesk.Revit.DB.GeometryInstance":
+				gsd = geomObj.GetInstanceGeometry()
+				for g in gsd:
+					if g != None: 
+						geomSolid = g
+					else:
+						pass
+				#results = results + 1
+			else:
+				geomSolid = geomObj
+		iter = []
+		"""
+		geomSolid = get_geometys(i1)
+		if geomSolid != None:
+			for ost in catIdlist:
+				iter = []
+				items = FilteredElementCollector(doc,iids).OfCategoryId(ost).WhereElementIsNotElementType()
+				iter.append(items.WherePasses(ElementIntersectsSolidFilter(geomSolid)).ToElements())
+				inter = flatten_List(iter)
+				for int in inter:
+					if int.Id.ToString() == i1.Id.ToString():
+						pass
+					else:
+						TransactionManager.Instance.EnsureInTransaction(doc)
+						if JoinGeometryUtils.AreElementsJoined(doc,int,i1):
+							pass
+						else:
+							results += join(int,i1)
+							"""
+							if int.Category.Name == "Стены" and i1.Category.Name == "Стены":
+								if int.get_Parameter(BuiltInParameter.WALL_STRUCTURAL_SIGNIFICANT).AsValueString() == "Да":
+									results += join(int,i1)
+								elif i1.get_Parameter(BuiltInParameter.WALL_STRUCTURAL_SIGNIFICANT).AsValueString() == "Да":
+									results += join(i1,int)
+								elif int.Width &gt;= i1.Width:
+									results += join(int,i1)
+								else:
+									results += join(i1,int)
+							elif int.Category.Name == "Перекрытия" and int.get_Parameter(BuiltInParameter.FLOOR_PARAM_IS_STRUCTURAL).AsValueString() == "Да":
+								if i1.Category.Name == "Перекрытия" and i1.get_Parameter(BuiltInParameter.FLOOR_PARAM_IS_STRUCTURAL).AsValueString() == "Да":
+									if int.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8 &gt; i1.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8:
+										results += join(int,i1)
+									else:
+										results += join(i1,int)
+								else:
+									results += join(int,i1)
+							elif i1.Category.Name == "Перекрытия" and i1.get_Parameter(BuiltInParameter.FLOOR_PARAM_IS_STRUCTURAL).AsValueString() == "Да":
+								if int.Category.Name == "Перекрытия" and int.get_Parameter(BuiltInParameter.FLOOR_PARAM_IS_STRUCTURAL).AsValueString() == "Да":
+									if int.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8 &gt; i1.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8:
+										results += join(int,i1)
+									else:
+										results += join(i1,int)
+								else:
+									results += join(i1,int)
+							elif int.Category.Name == "Стены" and i1.Category.Name == "Перекрытия":
+								if int.get_Parameter(BuiltInParameter.WALL_STRUCTURAL_SIGNIFICANT).AsValueString() == "Да":
+									results += join_s(int,i1)
+								else:
+									results += join(int,i1)
+							elif int.Category.Name == "Перекрытия" and i1.Category.Name == "Стены":
+								if i1.get_Parameter(BuiltInParameter.WALL_STRUCTURAL_SIGNIFICANT).AsValueString() == "Да":
+									results += join_s(i1,int)
+								else:
+									results += join(int,i1)
+							elif int.Category.Name == "Перекрытия" and i1.Category.Name == "Перекрытия":	
+								if int.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8 &gt; i1.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble()*304.8:
+									results += join(int,i1)
+								else:
+									results += join(i1,int)
+							else:
+								results += join(int,i1)
+							"""
+	
+						TransactionManager.Instance.TransactionTaskDone()
+					
+toc = time() # время в конце
+time = toc-tic
+OUT = "Join elements = "+str(results), "Time in seconds = "+str(time)
+</Script>
+    </PythonNodeModels.PythonNode>
+    <Dynamo.Graph.Nodes.CodeBlockNodeModel guid="316abeca-6f59-408d-90a0-86d1d7226875" type="Dynamo.Graph.Nodes.CodeBlockNodeModel" nickname="Code Block" x="-32.3183189311578" y="1034.8797333911" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" CodeText="parts[0];&#xA;elements[1];" ShouldFocus="false">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+    </Dynamo.Graph.Nodes.CodeBlockNodeModel>
+    <CoreNodeModels.Input.BoolSelector guid="274331a7-a2d0-4510-81b6-f575e48a5fe1" type="CoreNodeModels.Input.BoolSelector" nickname="Объединить геометрию /// Разделить геометрию " x="-353.339354998201" y="2237.69373320554" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.Boolean>True</System.Boolean>
+    </CoreNodeModels.Input.BoolSelector>
+    <PythonNodeModels.PythonNode guid="b21f3675-06d9-4eb8-a5a4-1fc328130b80" type="PythonNodeModels.PythonNode" nickname="get link elem. refs. and recreate its" x="291.099635744529" y="988.034232404089" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="true" isPinned="true" inputcount="5">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <PortInfo index="2" default="False" />
+      <PortInfo index="3" default="False" />
+      <PortInfo index="4" default="False" />
+      <Script>import sys 
+sys.path.append("C:\Program Files (x86)\IronPython 2.7\Lib")
+from itertools import repeat
+import gc
+import string
+import ctypes
+import traceback
+
+import clr
+clr.AddReference("RevitAPIUI")
+from Autodesk.Revit.UI import Selection
+from Autodesk.Revit.UI.Selection import ISelectionFilter
+
+clr.AddReference("RevitServices")
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+clr.AddReference('RevitAPI')
+from Autodesk.Revit.DB import *#Options, PartUtils, LinkElementId, IFamilyLoadOptions, ElementId, UnitType, UnitUtils, XYZ, IDuplicateTypeNamesHandler, SaveAsOptions
+from Autodesk.Revit.DB.Structure import StructuralType
+
+clr.AddReference('System')
+import System
+from System.Collections.Generic import List
+from System.Diagnostics import Process
+from System import Math
+
+#clr.AddReference('RevitAPI')
+#from Autodesk.Revit.DB import *#
+
+clr.AddReference('ProtoGeometry')
+import Autodesk
+from Autodesk.DesignScript.Geometry import *
+from Autodesk.DesignScript.Geometry import Point as DynPoint
+
+class iDuplicatesOptoins(IDuplicateTypeNamesHandler):
+	def OnDuplicateTypeNamesFound(self,duplicate_type_arg):
+		return DuplicateTypeAction.UseDestinationTypes	
+
+#region получаем Референсы элементов связаных файлов
+geo_options = Options()
+geo_options.ComputeReferences = True
+geo_options.IncludeNonVisibleObjects = True
+doc = DocumentManager.Instance.CurrentDBDocument
+uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument
+
+def tolist(obj1):
+	if hasattr(obj1,"__iter__"): return obj1
+	else: return [obj1]
+
+class CustomISelectionFilterList(ISelectionFilter):
+	def __init__(self, link_doc, fail_cats_list, fail_types_list, all_link_id_string):
+		self.link_doc = link_doc
+		self.fail_cats_list = fail_cats_list
+		self.fail_types_list = fail_types_list
+		self.all_link_id_string = all_link_id_string
+	def AllowElement(self, e):
+		if e.Category.Name in self.fail_cats_list:
+			return False
+		else:
+			return True
+	def AllowReference(self, ref, point):
+		if self.link_doc.GetElement(ref.LinkedElementId).Category.Name in self.fail_cats_list:
+			return False
+		elif self.link_doc.GetElement(ref.LinkedElementId).GetType().ToString() in self.fail_types_list:
+			return False
+		elif not self.link_doc.GetElement(ref.LinkedElementId) and not self.link_doc.GetElement(ref.LinkedElementId).get_Geometry(geo_options):
+			return False
+		elif str(ref.LinkedElementId.IntegerValue) in self.all_link_id_string:
+			return False
+		else:
+			return True
+
+
+link_doc = UnwrapElement(IN[1]).GetLinkDocument()
+if IN[0][0]: 
+	fail_cats_list = IN[2][0]
+else:
+	fail_cats_list = IN[2][1]
+fail_types_list = IN[2][2]
+all_link_id_list = IN[4][2]
+all_link_id_string = string.join(all_link_id_list,",")
+param_of_id_on_link = IN[4][0] # "АБН_ID_of_link_element"
+param_of_volum_test_on_link = IN[4][1] # АБН_elem_volume_test
+param_of_highite = IN[4][3] # АБН_elem_volume_test
+
+fam_path = IN[3][0]
+material = tolist(IN[3][1])
+isVoid = tolist(False)
+subcat = tolist(IN[3][2])
+volum_limit = IN[3][3]
+
+sel1 = uidoc.Selection
+ot2 = Selection.ObjectType.LinkedElement
+el_ref = sel1.PickObjects(Selection.ObjectType.LinkedElement,CustomISelectionFilterList(link_doc,fail_cats_list,fail_types_list,all_link_id_string), "Select the linked elements and press Finish.")
+references_clear_list = {ref.LinkedElementId:ref for ref in el_ref}
+sel1.Dispose()
+del el_ref,sel1
+gc.collect()
+#endregion
+out1 = references_clear_list.values() # референсы 
+volume_test = []
+def parim_writer(new_elem_id,link_elem_id):
+	new_element = doc.GetElement(new_elem_id)
+	old_element = link_doc.GetElement(link_elem_id)
+	new_element.LookupParameter(param_of_id_on_link).Set(str(link_elem_id.IntegerValue))
+	if old_element.get_Parameter(BuiltInParameter.HOST_VOLUME_COMPUTED):
+		#old_volume = Math.Round(old_element.Parameter[BuiltInParameter.HOST_VOLUME_COMPUTED].AsDouble() / 35.3147,3)#.ToString("N3")
+		old_volume = Math.Round(old_element.get_Parameter(BuiltInParameter.HOST_VOLUME_COMPUTED).AsDouble() ,3)#.ToString("N3")
+		new_volume = Math.Round(new_element.get_Parameter(BuiltInParameter.HOST_VOLUME_COMPUTED).AsDouble() ,3)#.ToString("N3")
+		#new_volume = Math.Round(new_element.LookupParameter("Объем").AsDouble() ,3)#.ToString("N3")
+		volume_compare = old_volume - new_volume# / 35.3147
+		new_element.LookupParameter(param_of_volum_test_on_link).Set((old_volume / 35.3147).ToString("N3"))
+		if volume_compare != 0:
+			volume_compare = volume_compare / 35.3147
+		volume_test.append(((old_volume,new_volume),volume_compare,volum_limit))	
+		if volume_compare &lt; -volum_limit or volume_compare &gt; volum_limit:#volume_compare != 0 and volume_compare &gt; 0.1 or volume_compare &lt; -0.1:
+			new_element.LookupParameter(param_of_highite).Set(1)
+		else:
+			new_element.LookupParameter(param_of_highite).Set(0)
+
+#region Копируем элементы, за исключением контекста
+if IN[0][0]: 
+
+
+	#link = UnwrapElement(IN[3])
+	LinkDoc = link_doc
+	el_ref_of_link_elem = out1
+	
+	cats = doc.Settings.Categories
+	cats_id = [i.Id for i in cats]
+	
+	def copy_elements(id_elem_from_link):
+		eList = List[ElementId]()
+		#id_elem_from_link = el_ref.LinkedElementId
+		eList.Add(id_elem_from_link)
+		new_element_id_list = None
+		if LinkDoc.GetElement(id_elem_from_link).GetType().ToString() == "Autodesk.Revit.DB.FamilyInstance" and LinkDoc.GetElement(id_elem_from_link).Symbol.Family.IsInPlace:
+			inplace_ref_list.append(id_elem_from_link)
+		try:
+			new_element_id_list = ElementTransformUtils.CopyElements(LinkDoc, eList, doc, transform, copy_past_opt)
+		except:
+			fail_list.append(id_elem_from_link)
+		if new_element_id_list != None:
+			new_elem_id = new_element_id_list[0]
+			new_element = doc.GetElement(new_elem_id)
+			if new_element:
+				doc.Regenerate()
+				parim_writer(new_elem_id, id_elem_from_link)
+		return new_elem_id
+	
+	copy_past_opt = CopyPasteOptions()
+	copy_past_opt.SetDuplicateTypeNamesHandler(iDuplicatesOptoins())
+	geo_options = Options()
+	geo_options.ComputeReferences = True
+	geo_options.IncludeNonVisibleObjects = True
+	transform = None
+	
+	new_elements_id = []
+	inplace_ref_list = []
+	
+	#TransactionManager.Instance.EnsureInTransaction(doc)
+	elems_iList = List[ElementId]()
+	[inplace_ref_list.append(r1) if LinkDoc.GetElement(r1.LinkedElementId).GetType().ToString() == "Autodesk.Revit.DB.FamilyInstance" and LinkDoc.GetElement(r1.LinkedElementId).Symbol.Family.IsInPlace else elems_iList.Add(r1.LinkedElementId) for r1 in el_ref_of_link_elem]
+	
+	if len(elems_iList) &gt; 0:
+		TransactionManager.Instance.EnsureInTransaction(doc)
+		new_elements_id = [copy_elements(id_elem_from_link) for id_elem_from_link in elems_iList]
+		[parim_writer(new_elem_id,link_elem_id) for new_elem_id, link_elem_id in zip(new_elements_id, elems_iList) if doc.GetElement(new_elem_id) and doc.GetElement(new_elem_id).LookupParameter(param_of_id_on_link) != None]
+		TransactionManager.Instance.TransactionTaskDone()
+	
+	out2 = inplace_ref_list
+	
+	del el_ref_of_link_elem,new_elements_id,inplace_ref_list
+	gc.collect()
+#endregion
+	#region Копируем контекст
+	if out2:
+		el_ref_of_link_elem = out2
+		new_elements_list = []
+		fail_list = []
+
+		TransactionManager.Instance.EnsureInTransaction(doc)
+		for el_ref in el_ref_of_link_elem:
+			eList = List[ElementId]()
+			id_elem_from_link = el_ref.LinkedElementId
+			eList.Add(id_elem_from_link)
+			new_element_id_list = None
+			try:
+				new_element_id_list = ElementTransformUtils.CopyElements(LinkDoc, eList, doc, transform, copy_past_opt)
+			except Exception:
+				fail_list.append(LinkDoc.GetElement(id_elem_from_link))
+			if new_element_id_list != None:
+				new_elem_id = new_element_id_list[0]
+				new_element = doc.GetElement(new_elem_id)
+				if new_element != None and new_element.LookupParameter(param_of_id_on_link) != None:
+					doc.Regenerate()
+					parim_writer(new_elem_id,id_elem_from_link)
+		TransactionManager.Instance.TransactionTaskDone()
+
+		OUT = volume_test,fail_list
+	#endregion
+
+#region ----------Создаём новые семейства Based on Dimitar Venkov famaly instance creator
+elif not IN[0][0]:
+
+	#clr.AddReference("RevitNodes")
+	#import Revit
+	#clr.ImportExtensions(Revit.Elements)
+	#clr.ImportExtensions(Revit.GeometryConversion)
+
+	def output1(l1):
+		if len(l1) == 1: return l1[0]
+		else: return l1
+	
+	def PadLists(lists):
+		len1 = len(lists[0])
+		for i in xrange(1,len(lists)):
+			len2 = len(lists[i])
+			if len2 == len1 : continue
+			elif len2 &gt; len1: lists[i] = lists[i][:len1]
+			else : lists[i].extend(repeat(lists[i][-1],len1 - len2))
+		return lists
+	
+	class FamOpt1(IFamilyLoadOptions):
+		def __init__(self):
+			pass
+		def OnFamilyFound(self,familyInUse, overwriteParameterValues):
+			return True
+		def OnSharedFamilyFound(self,familyInUse, source, overwriteParameterValues):
+			return True
+	#region-----------------------------получение геометрии---------------	
+	refs = out1
+	elements = [link_doc.GetElement(ref.LinkedElementId) for ref in refs]	
+	geo_options = Options()
+	geo_options.ComputeReferences = True
+	geo_options.IncludeNonVisibleObjects = True	
+	e_geoms = {}
+	volume_test = []
+	def get_geometys(element):
+		if element.get_Geometry(geo_options):
+			key = (element.Category.Name, element.Id.IntegerValue)
+			e_geoms[key] = []
+			for geometry_inst in element.get_Geometry(geo_options):
+				test_solid = []
+				if geometry_inst.GetType() == Autodesk.Revit.DB.GeometryInstance:
+					for geometry in geometry_inst.SymbolGeometry:
+						if geometry.GetType() == Autodesk.Revit.DB.Solid and geometry.Volume &gt; 0:
+							try:
+								e_geoms[key].append(geometry)
+								volume_test.append(geometry.Volume)
+							except: pass
+				else:
+					if geometry_inst.GetType() == Autodesk.Revit.DB.Solid and geometry_inst.Volume &gt; 0:
+						try:
+							e_geoms[key].append(geometry_inst)
+							volume_test.append(geometry.Volume)
+						except: pass
+	[get_geometys(element) for element in elements]
+
+	cats_and_solids = [(items[0], items[1]) for items in e_geoms.items() if items[1]]
+	#endregion
+	geom = []
+	names = []
+	category = []
+	old_ids_list = []
+	for cs in cats_and_solids:
+		geom.append(cs[1])
+		names.append(cs[0][0] + "_ID_" + str(cs[0][1]))
+		category.append(cs[0][0])
+		old_ids_list.append(ElementId(int(cs[0][1])))
+
+	units = doc.GetUnits().GetFormatOptions(UnitType.UT_Length).DisplayUnits
+	factor = UnitUtils.ConvertToInternalUnits(1,units)
+	acceptable_views = ("ThreeD", "FloorPlan", "EngineeringPlan", "CeilingPlan", "Elevation", "Section")
+	origin = XYZ(0,0,0)
+	str_typ = StructuralType.NonStructural
+	t1 = TransactionManager.Instance
+	temp_path = System.IO.Path.GetTempPath()
+	opt1 = Options()
+	opt1.ComputeReferences = True
+	SaveAsOpt = SaveAsOptions()
+	SaveAsOpt.OverwriteExistingFile = True
+	
+	def FindMat(doc,mat1):
+		mat_fec = FilteredElementCollector(doc).OfClass(Material)
+		for m in mat_fec:
+			if m.Name == mat1:
+				fam_mat = m
+				break
+		return fam_mat
+
+	def NewForm_background(geom, name1, cat1, isVoid1, mat1, subcat1, id_elem_from_link):
+		enable_mat = False if mat1 is None else True
+		enable_subcat = False if subcat1 is None else True
+		TransactionManager.ForceCloseTransaction(t1)
+		famdoc = doc.Application.NewFamilyDocument(fam_path)
+		message = None
+		temp_path = System.IO.Path.GetTempPath()
+		sat_path = "%s%s.sat" % (temp_path, name1)
+		t1.EnsureInTransaction(famdoc)
+		if message is None:
+			try:
+				save_path = "%s%s.rfa" % (temp_path, name1)
+				try: #set the category
+					fam_cat = famdoc.Settings.Categories.get_Item(cat1.Name)
+					famdoc.OwnerFamily.FamilyCategory = fam_cat
+				except:
+					fam_cat = famdoc.Settings.Categories.get_Item("Каркас несущий")
+					famdoc.OwnerFamily.FamilyCategory = fam_cat
+				if not isinstance(geom, list):
+					geom = [geom]
+				for s1 in geom:
+					if Math.Round(s1.Volume,3) != 0:
+						s2 = FreeFormElement.Create(famdoc,s1)
+						#volume_test.append(s1.Volume)
+						if s1.Volume &lt; 0:
+							void_par = s2.get_Parameter(BuiltInParameter.ELEMENT_IS_CUTTING).Set(1)
+							void_par2 = famdoc.OwnerFamily.get_Parameter(BuiltInParameter.FAMILY_ALLOW_CUT_WITH_VOIDS).Set(1)
+						else: #voids do not have a material values or a sub-cateogry
+							if enable_mat:
+								try:
+									fam_mat = FindMat(famdoc,mat1)
+									mat_par = s2.get_Parameter(BuiltInParameter.MATERIAL_ID_PARAM).Set(fam_mat.Id)
+								except: pass
+							if enable_subcat: #create and assign the sub-category:
+								try:
+									current_fam_cat = famdoc.OwnerFamily.FamilyCategory
+									new_subcat = famdoc.Settings.Categories.NewSubcategory(current_fam_cat, subcat1)
+									s2.Subcategory = new_subcat
+								except: pass
+				TransactionManager.ForceCloseTransaction(t1)
+				famdoc.SaveAs(save_path, SaveAsOpt)
+				family1 = famdoc.LoadFamily(doc, FamOpt1() )
+				famdoc.Close(False)
+				System.IO.File.Delete(save_path)
+				symbols = family1.GetFamilySymbolIds().GetEnumerator()
+				symbols.MoveNext()
+				symbol1 = doc.GetElement(symbols.Current)
+				t1.EnsureInTransaction(doc)
+				if not symbol1.IsActive: symbol1.Activate()
+				inst1 = doc.Create.NewFamilyInstance(origin, symbol1, str_typ)
+				if inst1 != None and inst1.LookupParameter(param_of_id_on_link) != None and inst1.get_Parameter(BuiltInParameter.HOST_VOLUME_COMPUTED):
+					doc.Regenerate()
+					parim_writer(inst1.Id,id_elem_from_link)
+				TransactionManager.ForceCloseTransaction(t1)
+				return inst1.ToDSType(False), family1.ToDSType(False)
+			except:
+				message = (traceback.format_exc(),"")
+				return message
+		else: return message
+
+	if len(geom) == len(names) == len(category) == len(isVoid) == len(material) == len(subcat):
+		return1 = [NewForm_background(g, ns, c, i, ml, s, i) for g, ns, c, i, ml, s, i in zip(geom, names, category, isVoid, material, subcat, old_ids_list)]
+	elif len(geom) == len(names) == len(category):
+		padded = PadLists([geom, isVoid, material, subcat])
+		p_isVoid, p_material, p_subcat = padded[1], padded[2], padded[3]
+		return1 = map(NewForm_background, geom, names, category, p_isVoid, p_material, p_subcat, old_ids_list)
+	else: return1 = [("Make sure that each geometry \n object has a unique family name.", "")]
+
+	OUT = geom,return1,volume_test
+	opt1.Dispose()
+	SaveAsOpt.Dispose()
+	gc.collect()
+#endregion
+OUT = volume_test</Script>
+    </PythonNodeModels.PythonNode>
+    <PythonNodeModels.PythonNode guid="7d1a1061-ff17-4b7c-9ddc-0a9c8323a680" type="PythonNodeModels.PythonNode" nickname="unjoin filter.colector by list 1" x="614.463263332539" y="1842.13652126175" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="2">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <Script>results = 0
+from time import time
+tic = time() # время для начала отсчета http://dynamobim.ru/forums/topic/раздутый-файл-dyn-callsitetracedata/#post-8050
+
+if IN[1] == False:
+	import clr
+	
+	clr.AddReference('RevitAPI')
+	import Autodesk
+	from Autodesk.Revit.DB import *#JoinGeometryUtils
+	
+	clr.AddReference('RevitServices')
+	import RevitServices
+	from RevitServices.Persistence import DocumentManager
+	from RevitServices.Transactions import TransactionManager
+	
+	#clr.AddReference('System')
+	#from System.Collections.Generic import List	
+	
+	#opt = Options()
+	doc = DocumentManager.Instance.CurrentDBDocument
+	
+	items1 = UnwrapElement(IN[0])
+	results = 0
+	
+	for i in items1:	
+		test = JoinGeometryUtils.GetJoinedElements(doc, i)
+		if test:
+			for t in test:
+				TransactionManager.Instance.EnsureInTransaction(doc)
+				JoinGeometryUtils.UnjoinGeometry(doc,i,doc.GetElement(t))
+				TransactionManager.Instance.TransactionTaskDone()
+				results +=1
+
+					
+toc = time() # время в конце
+time = toc-tic
+OUT = "Unjoin elements = "+str(results), "Time in seconds = "+str(time)
+</Script>
+    </PythonNodeModels.PythonNode>
+    <CoreNodeModels.Watch guid="9c8cfa49-c637-4244-8da5-23ac3c9891ea" type="CoreNodeModels.Watch" nickname="Количество объединённых элементов" x="638.514122035479" y="2263.80568055997" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+    </CoreNodeModels.Watch>
+    <CoreNodeModels.Input.StringInput guid="3cf8192d-655b-43ca-a305-cbe7ab20f345" type="CoreNodeModels.Input.StringInput" nickname="Список категорий" x="-149.69610968058" y="550.675502338682" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.String>Части, Стены, Перекрытия, Несущие колонны, Каркас несущий</System.String>
+      <System.String value="Части, Стены, Перекрытия, Несущие колонны, Каркас несущий" />
+    </CoreNodeModels.Input.StringInput>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="f0aedfca-5fa4-492b-a023-ada0e51d0e04" start_index="0" end="fe0430a6-d911-4d22-8715-48a97ccffc3b" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="17a3445d-89ab-4203-a19b-38232112e178" start_index="0" end="f0aedfca-5fa4-492b-a023-ada0e51d0e04" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="1225990d-3cc8-4be9-926e-821b3ab5f57c" start_index="0" end="1ccd40bf-ba0c-4f23-ac15-1ff5738d8d9a" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="1225990d-3cc8-4be9-926e-821b3ab5f57c" start_index="0" end="10ee8152-1e54-4992-8a72-c910bd67c412" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="10ee8152-1e54-4992-8a72-c910bd67c412" start_index="0" end="dfb12502-1074-47d7-ab8c-ee4272a716f8" end_index="2" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="1ccd40bf-ba0c-4f23-ac15-1ff5738d8d9a" start_index="0" end="743c8ac0-82b2-4910-8b4f-8c43ee3da44f" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="e1e56bc7-e44f-4723-8a23-46ab9c007f5f" start_index="0" end="1ccd40bf-ba0c-4f23-ac15-1ff5738d8d9a" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="3a72f325-f324-4f97-84f7-bcd666830424" start_index="0" end="7d1a1061-ff17-4b7c-9ddc-0a9c8323a680" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="3a72f325-f324-4f97-84f7-bcd666830424" start_index="0" end="dfb12502-1074-47d7-ab8c-ee4272a716f8" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="743c8ac0-82b2-4910-8b4f-8c43ee3da44f" start_index="0" end="316abeca-6f59-408d-90a0-86d1d7226875" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="743c8ac0-82b2-4910-8b4f-8c43ee3da44f" start_index="0" end="316abeca-6f59-408d-90a0-86d1d7226875" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="dfb12502-1074-47d7-ab8c-ee4272a716f8" start_index="0" end="9c8cfa49-c637-4244-8da5-23ac3c9891ea" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="316abeca-6f59-408d-90a0-86d1d7226875" start_index="1" end="3a72f325-f324-4f97-84f7-bcd666830424" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="274331a7-a2d0-4510-81b6-f575e48a5fe1" start_index="0" end="dfb12502-1074-47d7-ab8c-ee4272a716f8" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="274331a7-a2d0-4510-81b6-f575e48a5fe1" start_index="0" end="7d1a1061-ff17-4b7c-9ddc-0a9c8323a680" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="3cf8192d-655b-43ca-a305-cbe7ab20f345" start_index="0" end="fe0430a6-d911-4d22-8715-48a97ccffc3b" end_index="1" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="eabf6cdb-e230-495a-a9c0-7e754e33a0b5" annotationText="" left="-1232.97487119388" top="1220.36973521235" width="208.8" height="145.8" fontSize="30" InitialTop="1266.36973521235" InitialHeight="129.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
+      <Models ModelGuid="1225990d-3cc8-4be9-926e-821b3ab5f57c" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="0fac7821-d40a-45f0-8268-089a9e233e8a" annotationText="" left="-927.383169789857" top="1550.0005403666" width="360" height="164.2" fontSize="30" InitialTop="1596.0005403666" InitialHeight="148.2" TextblockHeight="36" backgrouund="#FFBB87C6">
+      <Models ModelGuid="1ccd40bf-ba0c-4f23-ac15-1ff5738d8d9a" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="f7ea610f-4090-4ac2-b26c-e30c16430c93" annotationText="" left="15.4423843692771" top="1409.01114765077" width="342.68183926203" height="321.249021166408" fontSize="30" InitialTop="1455.01114765077" InitialHeight="305.249021166408" TextblockHeight="36" backgrouund="#FF48B9FF">
+      <Models ModelGuid="dfb12502-1074-47d7-ab8c-ee4272a716f8" />
+      <Models ModelGuid="3a72f325-f324-4f97-84f7-bcd666830424" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="de302eb7-1b38-4e60-aaf9-9c4a19e427c9" annotationText="" left="-331.087113043488" top="988.879733391102" width="506.36879411233" height="149.37362134727" fontSize="30" InitialTop="1034.8797333911" InitialHeight="133.37362134727" TextblockHeight="36" backgrouund="#FFC1D676">
+      <Models ModelGuid="316abeca-6f59-408d-90a0-86d1d7226875" />
+      <Models ModelGuid="743c8ac0-82b2-4910-8b4f-8c43ee3da44f" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="8f7d2a9b-9556-4573-80a1-9c9290380405" annotationText="" left="-363.339354998201" top="2191.69373320554" width="361.6" height="113.8" fontSize="30" InitialTop="2237.69373320554" InitialHeight="97.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
+      <Models ModelGuid="274331a7-a2d0-4510-81b6-f575e48a5fe1" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="6c1117b0-ccab-4ffe-b0c2-b10f693ab4dd" annotationText="" left="604.463263332539" top="1796.13652126175" width="208.8" height="164.2" fontSize="30" InitialTop="1842.13652126175" InitialHeight="148.2" TextblockHeight="36" backgrouund="#FFA4E1FF">
+      <Models ModelGuid="7d1a1061-ff17-4b7c-9ddc-0a9c8323a680" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="a42a4d67-041e-4150-885b-96a0772f6939" annotationText="" left="628.514122035479" top="2217.80568055997" width="308" height="209.8" fontSize="30" InitialTop="2263.80568055997" InitialHeight="121.8" TextblockHeight="36" backgrouund="#FF71C6A8">
+      <Models ModelGuid="9c8cfa49-c637-4244-8da5-23ac3c9891ea" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="4f94805f-9d55-422f-ad5a-e2d5a3899053" annotationText="" left="-159.69610968058" top="504.675502338682" width="208.8" height="145.8" fontSize="30" InitialTop="550.675502338682" InitialHeight="129.8" TextblockHeight="36" backgrouund="#FFFF7BAC">
+      <Models ModelGuid="3cf8192d-655b-43ca-a305-cbe7ab20f345" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+  </Annotations>
+  <Presets />
+  <Cameras>
+    <Camera Name="Фоновый просмотр" eyeX="34314.23046875" eyeY="61974.66015625" eyeZ="-69296.2265625" lookX="25260.76953125" lookY="-23424.658203125" lookZ="15546.2236328125" upX="0.372265815734863" upY="0.899405181407928" upZ="0.229103341698647" />
+  </Cameras>
+</Workspace>
