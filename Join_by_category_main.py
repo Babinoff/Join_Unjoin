@@ -164,7 +164,7 @@ else:
 	#endregion
 #endregion
 t = time.stop()
-if IN[0]:
+if IN[1]:
 	OUT = "Join elements = " + str(results), "Minutes, Seconds, Milliseconds = ", [t.Minutes, t.Seconds, t.Milliseconds]
 else:
 	OUT = "Unjoin elements = " + str(results), "Minutes, Seconds, Milliseconds = ", [t.Minutes, t.Seconds, t.Milliseconds]
