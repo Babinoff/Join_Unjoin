@@ -16,7 +16,7 @@ from System.Diagnostics import Process, Stopwatch
 class TimeCounter:
 	def __init__(self):
 		#self.name = name
-		self.time = System.Diagnostics.Stopwatch.StartNew()
+		self.time = Stopwatch.StartNew()
 		self.time.Start()
 	def stop(self):
 		self.time.Stop()
