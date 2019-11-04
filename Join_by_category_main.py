@@ -150,6 +150,7 @@ if IN[1]:
 	TransactionManager.Instance.ForceCloseTransaction()
 	#endregion
 else:
+	results = 0
 	#region разделение геометрии
 	items1 = flatten_List(elements)
 	TransactionManager.Instance.EnsureInTransaction(doc)
@@ -157,9 +158,7 @@ else:
 		test = JoinGeometryUtils.GetJoinedElements(doc, i)
 		if test:
 			for t in test:
-				
 				JoinGeometryUtils.UnjoinGeometry(doc,i,doc.GetElement(t))
-				
 				results += 1
 	TransactionManager.Instance.ForceCloseTransaction()
 	#endregion
